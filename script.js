@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('task-form');
     const input = document.getElementById('task-input');
     const list = document.getElementById('task-list');
+    const summary = document.getElementById('task-summary');
+    const countLabel = document.getElementById('task-count');
+    const clearCompletedBtn = document.getElementById('clear-completed-btn');
     // Load tasks from localStorage, or seed with sample content on first load
     let tasks;
     const stored = localStorage.getItem('tasks');
@@ -136,6 +139,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveTasks() {
         localStorage.setItem('tasks', JSON.stringify(tasks));
+        updateSummary();
+    }
+
+    // Show remaining task count and toggle the "Clear completed" button
+    function updateSummary() {
+        const remaining = tasks.filter(t => !t.completed).length;
+        const hasCompleted = tasks.some(t => t.completed);
+        summary.classList.toggle('d-none', tasks.length === 0);
+        summary.classList.toggle('d-flex', tasks.length > 0);
+        countLabel.textContent = `${remaining} ${remaining === 1 ? 'task' : 'tasks'} left`;
+        clearCompletedBtn.classList.toggle('invisible', !hasCompleted);
     }
 
     // Create a task list item with event handlers and animations
@@ -233,5 +247,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Remove all completed tasks with the delete animation
+    clearCompletedBtn.addEventListener('click', () => {
+        const completedItems = Array.from(list.children).filter(li =>
+            li.querySelector('input[type="checkbox"]').checked
+        );
+        tasks = tasks.filter(t => !t.completed);
+        saveTasks();
+        completedItems.forEach(li => {
+            li.classList.add('animate-delete');
+            li.addEventListener('animationend', () => li.remove(), { once: true });
+        });
+    });
+
     renderTasks();
+    updateSummary();
 });

@@ -11,6 +11,7 @@ This app was entirely implemented using OpenAI Codex with the GPT 4.1 model.
 - Add tasks
 - Mark tasks as complete
 - Delete tasks
+- Remaining task count and "Clear completed" button
 - Persistent storage using `localStorage`
 - Fun sound effects 🥳
 
